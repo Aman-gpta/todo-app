@@ -81,6 +81,37 @@ function App() {
     setTasks(sortedTasks);
   };
 
+  // Download tasks as plain text
+  const downloadTasksAsText = () => {
+    // Convert tasks array to plain text format
+    const textContent = tasks
+      .map(
+        (task) =>
+          `Task: ${task.text}\nPriority: ${task.priority}\nCompleted: ${task.completed ? "Yes" : "No"
+          }\n`
+      )
+      .join("\n");
+
+    // Create a Blob with the plain text data
+    const blob = new Blob([textContent], { type: "text/plain" });
+
+    // Create a temporary URL for the Blob
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary anchor element
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "todo-tasks.txt"; // Name of the file to be downloaded
+
+    // Append to the body, click programmatically, and then remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Release the URL object
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="app">
       <header className="header">
@@ -111,13 +142,16 @@ function App() {
         </button>
       </div>
 
-      {/* Sort Buttons */}
+      {/* Sort and Download Buttons */}
       <div className="sort-buttons">
         <button onClick={sortByPriority} className="sort-button">
           Sort by Priority
         </button>
         <button onClick={sortByTimeAdded} className="sort-button">
           Sort by Time Added
+        </button>
+        <button onClick={downloadTasksAsText} className="download-button">
+          Download Tasks
         </button>
       </div>
 
